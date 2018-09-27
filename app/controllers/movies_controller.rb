@@ -12,7 +12,13 @@ class MoviesController < ApplicationController
 
   def index
     # Default value
-    @movies = Movie.all
+    @all_ratings = Movie.mpaa_ratings
+    
+    if params[:ratings]
+      @movies = Movie.where(:rating => params[:ratings].keys)
+    else
+      @movies = Movie.all  
+    end
     
     # If the button is clicked
     if params[:sort]
