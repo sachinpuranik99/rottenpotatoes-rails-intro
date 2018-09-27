@@ -11,7 +11,13 @@ class MoviesController < ApplicationController
   end
 
   def index
+    # Default value
     @movies = Movie.all
+    
+    # If the button is clicked
+    if params[:sort]
+      @movies = Movie.order(params[:sort])
+    end
   end
 
   def new
