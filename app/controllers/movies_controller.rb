@@ -14,16 +14,25 @@ class MoviesController < ApplicationController
     # Default value
     @all_ratings = Movie.mpaa_ratings
     
-    if params[:ratings]
-      @movies = Movie.where(:rating => params[:ratings].keys)
-    else
-      @movies = Movie.all  
-    end
-    
+    session[:ratings] ||= Hash[@all_ratings.map {|rating| [rating, rating]}]
+    session[:sort] ||= 'id'
+ 
     # If the button is clicked
     if params[:sort]
-      @movies = Movie.order(params[:sort])
+      session[:sort] = params[:sort]
     end
+    
+    if params[:ratings]
+      session[:ratings] = params[:ratings]
+    end
+ 
+    if (!params[:sort] || !params[:ratings])
+      flash.keep
+      redirect_to :sort => session[:sort], :ratings => session[:ratings]
+    end
+ 
+      @movies = Movie.where(:rating => session[:ratings].keys).order(session[:sort])
+    
   end
 
   def new
